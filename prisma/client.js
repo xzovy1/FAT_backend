@@ -1,6 +1,6 @@
-import { PrismaClient } from '../generated/prisma/index.js';
-import { withAccelerate } from '@prisma/extension-accelerate';
+const { PrismaClient } = require('../generated/prisma/index.js');
+const { withAccelerate } = require('@prisma/extension-accelerate');
 
 const prisma = new PrismaClient().$extends(withAccelerate())
 
-export default prisma;
+module.exports = prisma;
