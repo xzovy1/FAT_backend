@@ -1,0 +1,59 @@
+{
+    "unitInfo": {
+        "jobNumber": null,
+        "unitNumber": null,
+        "testType": null
+    },
+    "technicians": [],
+    "metadata": {
+        "plant": null,
+        "shift": null,
+        "startTime": null,
+        "endTime": null,
+        "status": null
+    },
+    "sections": [
+        {
+            "id": "prechecks",
+            "title": "Unit Pre-checks",
+            "points": [
+                {
+                    "id": "test_id",
+                    "name": "Test Point 1",
+                    "measuredValue": "10",
+                    "result": "Pass"
+                }
+            ]
+        },
+        {
+            "id": "controls",
+            "title": "Controls & Low Voltage",
+            "points": []
+        },
+        {
+            "id": "high_voltage",
+            "title": "High Voltage",
+            "points": []
+        },
+        {
+            "id": "evap_section",
+            "title": "Evaporator Section",
+            "points": []
+        },
+        {
+            "id": "motor_section",
+            "title": "Motors Section",
+            "points": []
+        },
+        {
+            "id": "teardown_and_signoff",
+            "title": "Sign off",
+            "points": []
+        },
+        {
+            "id": "comments",
+            "title": "Comments",
+            "comments": []
+        }
+    ]
+}
