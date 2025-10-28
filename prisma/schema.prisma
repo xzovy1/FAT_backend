@@ -14,9 +14,116 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  email     String   @unique
-  name      String?
+model Technician {
+  id int @id @default(autoincrement())
+  firstname String
+  lastname String
+  unitTests UnitTest[]          
+  signoffs  UnitTest[] @relation("SignoffTechnician")
+}
+
+model Job {
+  id            Int       @id @default(autoincrement())
+  job_number    Int    @unique
+  plc_mfg       String    // PLC manufacturer for this job
+  created_at    DateTime  @default(now())
+
+  unitTests     UnitTest[]
+}
+
+model Unit {
+  id            Int         @id @default(autoincrement())
+  unit_number int      @unique
+  model         String?
+  created_at    DateTime    @default(now())
+  unitTests     UnitTest[]
+}
+
+model TestForm {
+  id         Int          @id @default(autoincrement())
+  name       String
+  version    Int
+  is_active  Boolean      @default(true)
+  created_at DateTime     @default(now())
+
+  testPoints TestPoint[]
+  unitTests  UnitTest[]
+
+  @@unique([name, version])
+}
+
+model UnitTest {
+  id           Int          @id @default(autoincrement())
+  unit_id      Int
+  form_id      Int
+  job_id       Int
+  technician_id Int   
+  test_type   TestType
+  started_at   DateTime     @default(now())
+  completed_at DateTime?
+  conditional_sign_off Boolean
+
+  technicians  Technician[] 
+  signoff_id   Int?
+  signoff_by   Technician?  @relation("SignoffTechnician", fields: [signoff_id], references: [id])
+
+  unit        Unit         @relation(fields: [unit_id], references: [id])
+  form        TestForm     @relation(fields: [form_id], references: [id])
+  job         Job          @relation(fields: [job_id], references: [id])
+  results     TestResult[]
+}
+
+model TestSection {
+   id            Int       @id @default(autoincrement())
+   name          String
+   sequence      Int
+   form_id       Int
+   testPoints    TestPoint[]
+
+   form          TestForm  @relation(fields: [form_id], references: [id])
+}
+
+model TestPoint {
+  id            Int       @id @default(autoincrement())
+  section_id       Int
+  sequence      Int
+  name          String
+  description   String?
+  expected_value Int?
+  expected_values Int[]
+  data_type     DataType
+
+  section       TestSection  @relation(fields: [section_id], references: [id])
+  results       TestResult[]
+}
+
+model TestResult {
+  id            Int       @id @default(autoincrement())
+  unit_test_id  Int
+  test_point_id Int
+  actual_value  String?
+  actual_number Float?
+  result        ResultStatus
+
+  unitTest      UnitTest  @relation(fields: [unit_test_id], references: [id])
+  testPoint     TestPoint @relation(fields: [test_point_id], references: [id])
+}
+
+enum DataType {
+  boolean
+  numeric
+  text
+  range
+  date
+}
+
+enum ResultStatus {
+  PASS
+  FAIL
+  INCOMPLETE
+}
+
+enum TestType {
+  fullwater
+  bypass
 }

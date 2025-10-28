@@ -10,7 +10,8 @@
         "shift": null,
         "startTime": null,
         "endTime": null,
-        "status": null
+        "status": null,
+        "toolData": []
     },
     "sections": [
         {
@@ -18,22 +19,273 @@
             "title": "Unit Pre-checks",
             "points": [
                 {
-                    "id": "test_id",
-                    "name": "Test Point 1",
-                    "measuredValue": "10",
-                    "result": "Pass"
+                    "id": "forms",
+                    "name": "Other Departmental Paperwork",
+                    "description": "All QC and Production forms are complete and unit is ready to test",
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "work_area",
+                    "name": "Unit and work area are clear of hazards and debris",
+                    "description": "Ensure unit is safe to energize",
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "damper_orientation",
+                    "name": "Damper Orientation",
+                    "description": "Ensure Damper orientation for left and right units is correct as per Silent-Aire drawings.",
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf1_motor_winding",
+                    "name": "Supply Fan 1 Internal Windings",
+                    "description": "Internal motor winding continuity",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf1_motor_cables",
+                    "name": "Supply Fan 1 Meggar",
+                    "description": "Test motor and cable insulation",
+                    "expected": 11,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf2_motor_winding",
+                    "name": "Supply Fan 2 Internal Windings",
+                    "description": "Internal motor winding continuity",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf2_motor_cables",
+                    "name": "Supply Fan 2 Meggar",
+                    "description": "Test motor and cable insulation",
+                    "expected": 11,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf3_motor_winding",
+                    "name": "Supply Fan 3 Internal Windings",
+                    "description": "Internal motor winding continuity",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf3_motor_cables",
+                    "name": "Supply Fan 3 Meggar",
+                    "description": "Test motor and cable insulation",
+                    "expected": 11,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf4_motor_winding",
+                    "name": "Supply Fan 4 Internal Windings",
+                    "description": "Internal motor winding continuity",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf4_motor_cables",
+                    "name": "Supply Fan 4 Meggar",
+                    "description": "Test motor and cable insulation",
+                    "expected": 11,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf5_motor_winding",
+                    "name": "Supply Fan 5 Internal Windings",
+                    "description": "Internal motor winding continuity",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf5_motor_cables",
+                    "name": "Supply Fan 5 Meggar",
+                    "description": "Test motor and cable insulation",
+                    "expected": 11,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf6_motor_winding",
+                    "name": "Supply Fan 6 Internal Windings",
+                    "description": "Internal motor winding continuity",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "sf6_motor_cables",
+                    "name": "Supply Fan 6 Meggar",
+                    "description": "Test motor and cable insulation",
+                    "expected": 11,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
                 }
+
             ]
         },
         {
             "id": "controls",
             "title": "Controls & Low Voltage",
-            "points": []
+            "points": [
+                {
+                    "id": "sa_temp",
+                    "name": "Supply Air Temperature Sensor",
+                    "description": "",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "ma_temp",
+                    "name": "Mixed Air Temperature Sensor",
+                    "description": "",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "rh_one",
+                    "name": "Relative Humidity 1 Sensor",
+                    "description": "",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "rh_two",
+                    "name": "Relative Humidity 2 Sensor",
+                    "description": "",
+                    "expected": null,
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "face_damper_command",
+                    "name": "Face Damper Command",
+                    "description": "Test at command values 0, 50, 100",
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "face_damper_feedback",
+                    "name": "Face Damper Feedback",
+                    "description": "Record Values at 0, 50 and 100 command",
+                    "expected": [0, 50, 100],
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "bypass_damper_command",
+                    "name": "Bypass Damper Command",
+                    "description": "Test at command values 0, 50, 100",
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "bypass_damper_feedback",
+                    "name": "Bypass Damper Feedback",
+                    "description": "Record Values at 0, 50 and 100 command",
+                    "expected": [0, 50, 100],
+                    "measured": null,
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "whl",
+                    "name": "Water High Level Float",
+                    "description": "",
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "wol",
+                    "name": "Water Operating Level Float",
+                    "description": "",
+                    "result": null,
+                    "comment": null
+                },
+                {
+                    "id": "wll",
+                    "name": "Water Low Level Float",
+                    "description": "",
+                    "result": null,
+                    "comment": null
+                }
+
+            ]
         },
         {
             "id": "high_voltage",
             "title": "High Voltage",
-            "points": []
+            "points": [
+                {
+                    "id": "supply_voltage",
+                    "name": "Main Supply Volage",
+                    "description": "Phase-to-phase and Phase-to-ground",
+                    "expected": [480, 277],
+                    "measured": []
+                },
+                {
+                    "id": "vfd_voltage",
+                    "name": "VFD Supply Volage",
+                    "description": "Phase-to-phase to VFD from Harmonic Filter",
+                    "expected": [480, 500],
+                    "measured": []
+                },
+                {
+                    "id": "xfmr_1",
+                    "name": "Transformer 1",
+                    "description": "Transformer Line and Load",
+                    "expected": [480, 120],
+                    "measured": []
+                },
+                {
+                    "id": "xfmr_2",
+                    "name": "Transformer 2",
+                    "description": "Transformer Line and Load",
+                    "expected": [480, 120],
+                    "measured": []
+                },
+                {
+                    "id": "xfmr_3",
+                    "name": "Transformer 3",
+                    "description": "Transformer Line and Load",
+                    "expected": [480, 120],
+                    "measured": []
+                }
+            ]
         },
         {
             "id": "evap_section",
@@ -48,12 +300,13 @@
         {
             "id": "teardown_and_signoff",
             "title": "Sign off",
-            "points": []
-        },
-        {
-            "id": "comments",
-            "title": "Comments",
-            "comments": []
+            "points": [
+                {
+                    "technician": null,
+                    "date": null,
+                    "conditional": null
+                }
+            ]
         }
     ]
 }
