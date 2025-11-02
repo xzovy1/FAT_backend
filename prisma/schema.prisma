@@ -15,10 +15,10 @@ datasource db {
 }
 
 model User {
-  id            Int         @id @default(autoincrement())
+  id            Int         @id @default(autoincrement()) @unique
   firstname     String
   lastname      String
-  username      String
+  username      String      @unique
   is_admin      Boolean     @default(false)
   password_hash String
   technician_id Int?        @unique

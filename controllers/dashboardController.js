@@ -34,44 +34,17 @@ const getDashboard = async (req, res) => {
         // 
         // for even units (except unit # 2): unitNumber % 8 == 2
         // for odd (except unit # 1):        unitNumber % 8 == 1
-        const nextFullWater = await prisma.unit.findMany({
-            where: {
-                AND: [
-                    {
-                        unit_number: {
-                            OR: [
-                                {
-                                    AND: [
-                                        { mod: [2, 1] }, //odd
-                                        { mod: [8, 1] }
-                                    ]
-
-                                },
-                                {
-                                    AND: [
-                                        { mod: [2, 0] }, //even
-                                        { mod: [8, 2] }
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        unitTests: {
-                            none: {} // No tests yet
-                        }
-                    }
-                ]
-            },
-            orderBy: {
-                unit_number: 'asc'
-            },
-            take: 5,
-            select: {
-                unit_number: true
-            }
-        });
-
+        const nextFullWaterRows = await prisma.$queryRaw`
+          SELECT id, unit_number
+          FROM "Unit"
+          WHERE (unit_number % 8) IN (1, 2)
+            AND NOT EXISTS (
+              SELECT 1 FROM "UnitTest" ut WHERE ut.unit_id = "Unit".id
+            )
+          ORDER BY unit_number ASC
+          LIMIT 5
+        `;
+        const nextFullWater = nextFullWaterRows.map(r => r.unit_number);
         // Get top deficiencies (FAIL results)
         const topDeficiencies = await prisma.testResult.findMany({
             where: {
