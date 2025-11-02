@@ -1,8 +1,8 @@
 # Testing Dashboard
 
 ## Goals:
-- Web dashboard and API to manage Functional Acceptance Tests (FAT) / Full Water Tests (FWT).
-- Store frontend JSON forms, generate printable PDFs, and surface dashboards for upcoming tests, in-progress units and common deficiencies.
+- Web dashboard and API to manage Factory Acceptance Test (FAT) forms and Full Water Tests (FWT).
+- Fill out test inspection form, generate printable PDFs, and dashboards for upcoming water tests, in-progress units and common deficiencies.
 
 ### Dashboard
 - see upcoming water tests
@@ -20,6 +20,13 @@
 - PDF Generation: Puppeteer
 - Frontend: React
 
+
+## How it works:
+- admin user creates job number.
+    - 32 units are generated based on pod number (1, 2, 3, 4, ...)
+        - calculated by: 32 * 2 = 64 - 31 = 33, the first unit in the second pod
+        - functionalities are seeded from the 32 units. with test type assigned(or technician assigns the test type.)
+- 
 
 ## Schema
 #### Tables

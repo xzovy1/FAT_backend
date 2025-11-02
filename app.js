@@ -5,12 +5,14 @@ const express = require("express");
 
 const app = express();
 
-//functionality acceptance testing
-const fatRouter = require("./routes/fatRouter")
-app.use("/api/forms", fatRouter);
+const authRouter = require('./routers/authRouter');
+app.use('/api/auth', authRouter);
 
+//factory acceptance testing
+const functionalityRouter = require("./routers/functionalityRouter")
+app.use("/api/forms", functionalityRouter);
 
-const dashboardRouter = require("./routes/dashboardRouter")
+const dashboardRouter = require("./routers/dashboardRouter")
 app.use("/api/home", dashboardRouter)
 
 

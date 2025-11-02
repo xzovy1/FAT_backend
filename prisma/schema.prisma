@@ -14,12 +14,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            Int         @id @default(autoincrement())
+  firstname     String
+  lastname      String
+  username      String
+  is_admin      Boolean     @default(false)
+  password_hash String
+  technician_id Int?        @unique
+  technician    Technician? @relation(fields: [technician_id], references: [id])
+}
+
 model Technician {
   id        Int        @id @default(autoincrement())
-  firstname String
-  lastname  String
   unitTests UnitTest[]
   signoffs  UnitTest[] @relation("SignoffTechnician")
+
+  User User?
 }
 
 model Job {
