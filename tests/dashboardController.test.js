@@ -29,11 +29,11 @@ describe('dashboardController', () => {
         // inProgress
         prisma.unitTest.findMany
             .mockResolvedValueOnce([
-                { id: 1, unit: { unit_number: '1234-50L' }, job: { job_number: 'JOB-1' }, started_at: new Date() }
+                { id: 1, unit: { unit_number: 50 }, job: { job_number: 1234 }, started_at: new Date() }
             ])
             // recentSignOffs (second call)
             .mockResolvedValueOnce([
-                { id: 2, unit: { unit_number: '1234-48L' }, job: { job_number: 'JOB-2' }, completed_at: new Date() }
+                { id: 2, unit: { unit_number: '48L' }, job: { job_number: '1234' }, completed_at: new Date() }
             ]);
 
         prisma.unit.findMany.mockResolvedValue([

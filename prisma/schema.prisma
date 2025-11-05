@@ -15,18 +15,23 @@ datasource db {
 }
 
 model User {
-  id            Int         @id @default(autoincrement()) @unique
+  id            Int         @id @unique @default(autoincrement())
   firstname     String
   lastname      String
-  username      String      @unique
+  email      String      @unique
   is_admin      Boolean     @default(false)
   password_hash String
   technician_id Int?        @unique
   technician    Technician? @relation(fields: [technician_id], references: [id])
+  last_login  DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
 }
 
 model Technician {
-  id        Int        @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
+  shift Shift
   unitTests UnitTest[]
   signoffs  UnitTest[] @relation("SignoffTechnician")
 
@@ -34,19 +39,48 @@ model Technician {
 }
 
 model Job {
-  id         Int      @id @default(autoincrement())
-  job_number Int      @unique
+  id         Int      @id @default(autoincrement()) @unique
   plc_mfg    String // PLC manufacturer for this job
   created_at DateTime @default(now())
 
   unitTests UnitTest[]
 }
 
+model UnitTest {
+  id Int @id @default(autoincrement())
+
+  test_type            TestType
+  started_at           DateTime  @default(now())
+  completed_at         DateTime?
+  conditional_sign_off Boolean
+
+  unit_id Int
+  unit    Unit @relation(fields: [unit_id], references: [id])
+
+  form_id Int
+  form    TestForm @relation(fields: [form_id], references: [id])
+
+  job_id Int
+  job    Job @relation(fields: [job_id], references: [id])
+
+  signoff_id Int?
+  signoff_by Technician? @relation("SignoffTechnician", fields: [signoff_id], references: [id])
+
+  technicians Technician[]
+  results     TestResult[]
+
+  @@index([started_at])
+  @@index([completed_at])
+  @@index([unit_id, job_id])
+
+}
+
 model Unit {
-  id          Int        @id @default(autoincrement())
-  unit_number Int        @unique
+  id          Int         @id @default(autoincrement())
+  unit_number Int         @unique
+  unit_hand   Orientation
   model       String?
-  created_at  DateTime   @default(now())
+  created_at  DateTime    @default(now())
   unitTests   UnitTest[]
 }
 
@@ -64,63 +98,63 @@ model TestForm {
   @@unique([name, version])
 }
 
-model UnitTest {
-  id                   Int       @id @default(autoincrement())
-  unit_id              Int
-  form_id              Int
-  job_id               Int
-  technician_id        Int
-  test_type            TestType
-  started_at           DateTime  @default(now())
-  completed_at         DateTime?
-  conditional_sign_off Boolean
-
-  technicians Technician[]
-  signoff_id  Int?
-  signoff_by  Technician?  @relation("SignoffTechnician", fields: [signoff_id], references: [id])
-
-  unit    Unit         @relation(fields: [unit_id], references: [id])
-  form    TestForm     @relation(fields: [form_id], references: [id])
-  job     Job          @relation(fields: [job_id], references: [id])
-  results TestResult[]
+model TestFormVersion {
+  id          Int      @id @default(autoincrement())
+  form_id     Int
+  form        TestForm @relation(fields: [form_id], references: [id])
+  changes     Json     // Store what changed
+  created_at  DateTime @default(now())
+  created_by  Int      // Link to user who made changes
 }
 
 model TestSection {
-  id         Int         @id @default(autoincrement())
-  name       String
-  sequence   Int
-  form_id    Int
+  id       Int    @id @default(autoincrement())
+  name     String
+  sequence Int
+
   testPoints TestPoint[]
 
-  form TestForm @relation(fields: [form_id], references: [id])
+  form_id Int
+  form    TestForm @relation(fields: [form_id], references: [id])
 }
 
 model TestPoint {
-  id              Int      @id @default(autoincrement())
-  section_id      Int
-  sequence        Int
-  name            String
-  description     String?
+  id          Int     @id @default(autoincrement())
+  sequence    Int
+  name        String
+  description String?
+
   expected_value  Int?
   expected_values Int[]
-  data_type       DataType
 
-  section    TestSection  @relation(fields: [section_id], references: [id])
-  results    TestResult[]
-  TestForm   TestForm?    @relation(fields: [testFormId], references: [id])
+  data_type DataType
+
+  section_id Int
+  section    TestSection @relation(fields: [section_id], references: [id])
+
   testFormId Int?
+  TestForm   TestForm? @relation(fields: [testFormId], references: [id])
+
+  results TestResult[]
 }
 
 model TestResult {
   id            Int          @id @default(autoincrement())
-  unit_test_id  Int
-  test_point_id Int
+  
   actual_value  String?
   actual_number Float?
   result        ResultStatus
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  unitTest  UnitTest  @relation(fields: [unit_test_id], references: [id])
-  testPoint TestPoint @relation(fields: [test_point_id], references: [id])
+  comments      String?
+  created_by    Int
+
+  unit_test_id Int
+  unitTest     UnitTest @relation(fields: [unit_test_id], references: [id])
+
+  test_point_id Int
+  testPoint     TestPoint @relation(fields: [test_point_id], references: [id])
 }
 
 enum DataType {
@@ -140,4 +174,16 @@ enum ResultStatus {
 enum TestType {
   FULLWATER
   BYPASS
+}
+
+enum Orientation {
+  Left
+  Right
+}
+
+enum Shift {
+  1
+  2
+  NIGHT
+
 }
