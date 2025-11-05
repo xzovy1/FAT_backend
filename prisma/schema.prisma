@@ -18,20 +18,20 @@ model User {
   id            Int         @id @unique @default(autoincrement())
   firstname     String
   lastname      String
-  email      String      @unique
+  email         String      @unique
   is_admin      Boolean     @default(false)
   password_hash String
   technician_id Int?        @unique
   technician    Technician? @relation(fields: [technician_id], references: [id])
-  last_login  DateTime?
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
+  last_login    DateTime?
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
 }
 
 model Technician {
   id Int @id @default(autoincrement())
 
-  shift Shift
+  shift     Int //1: shift 1, 2: shift 2, 3: nights
   unitTests UnitTest[]
   signoffs  UnitTest[] @relation("SignoffTechnician")
 
@@ -39,7 +39,7 @@ model Technician {
 }
 
 model Job {
-  id         Int      @id @default(autoincrement()) @unique
+  id         Int      @id @unique @default(autoincrement())
   plc_mfg    String // PLC manufacturer for this job
   created_at DateTime @default(now())
 
@@ -72,7 +72,6 @@ model UnitTest {
   @@index([started_at])
   @@index([completed_at])
   @@index([unit_id, job_id])
-
 }
 
 model Unit {
@@ -91,20 +90,21 @@ model TestForm {
   is_active  Boolean  @default(true)
   created_at DateTime @default(now())
 
-  testPoints  TestPoint[]
-  unitTests   UnitTest[]
-  TestSection TestSection[]
+  testPoints       TestPoint[]
+  unitTests        UnitTest[]
+  TestSection      TestSection[]
+  testFormVersions TestFormVersion[]
 
   @@unique([name, version])
 }
 
 model TestFormVersion {
-  id          Int      @id @default(autoincrement())
-  form_id     Int
-  form        TestForm @relation(fields: [form_id], references: [id])
-  changes     Json     // Store what changed
-  created_at  DateTime @default(now())
-  created_by  Int      // Link to user who made changes
+  id         Int      @id @default(autoincrement())
+  form_id    Int
+  form       TestForm @relation(fields: [form_id], references: [id])
+  changes    Json // Store what changed
+  created_at DateTime @default(now())
+  created_by Int // Link to user who made changes
 }
 
 model TestSection {
@@ -139,16 +139,16 @@ model TestPoint {
 }
 
 model TestResult {
-  id            Int          @id @default(autoincrement())
-  
+  id Int @id @default(autoincrement())
+
   actual_value  String?
   actual_number Float?
   result        ResultStatus
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
 
-  comments      String?
-  created_by    Int
+  comments   String?
+  created_by Int
 
   unit_test_id Int
   unitTest     UnitTest @relation(fields: [unit_test_id], references: [id])
@@ -179,11 +179,4 @@ enum TestType {
 enum Orientation {
   Left
   Right
-}
-
-enum Shift {
-  1
-  2
-  NIGHT
-
 }
