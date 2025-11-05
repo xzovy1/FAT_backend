@@ -1,6 +1,5 @@
 const prisma = require("../prisma/client.js");
 
-// Get test functionality for a specific job and unit
 const getFunctionality = async (req, res) => {
 	try {
 		const { job_id, unit_id } = req.params;
@@ -12,11 +11,14 @@ const getFunctionality = async (req, res) => {
 				completed_at: null
 			},
 			include: {
+				unit: true,
+				job: true,
+				technician: true,
 				form: {
 					include: {
-						TestSection: {
+						sections: {  // Updated from TestSection to match schema
 							include: {
-								testPoints: true
+								points: true  // Updated from testPoints to match schema
 							},
 							orderBy: {
 								sequence: 'asc'
@@ -24,7 +26,11 @@ const getFunctionality = async (req, res) => {
 						}
 					}
 				},
-				results: true
+				results: {
+					include: {
+						created_by: true  // Include technician who created result
+					}
+				}
 			}
 		});
 
@@ -33,23 +39,38 @@ const getFunctionality = async (req, res) => {
 		}
 
 		// Transform data for frontend
-		const sections = unitTest.form.TestSection.map(section => ({
+		const sections = unitTest.form.sections.map(section => ({
 			id: section.id,
 			name: section.name,
 			sequence: section.sequence,
-			testPoints: section.testPoints.map(point => ({
+			testPoints: section.points.map(point => ({
 				id: point.id,
 				name: point.name,
 				description: point.description,
 				dataType: point.data_type,
 				expectedValue: point.expected_value,
 				expectedValues: point.expected_values,
-				result: unitTest.results.find(r => r.test_point_id === point.id)
+				result: unitTest.results.find(r => r.test_point_id === point.id),
+				comments: unitTest.results.find(r => r.test_point_id === point.id)?.comments || null
 			}))
 		}));
 
 		res.json({
 			testId: unitTest.id,
+			unitInfo: {
+				number: unitTest.unit.unit_number,
+				hand: unitTest.unit.unit_hand,
+				model: unitTest.unit.model
+			},
+			jobInfo: {
+				number: unitTest.job.job_number,
+				plcMfg: unitTest.job.plc_mfg
+			},
+			technician: unitTest.technician ? {
+				id: unitTest.technician.id,
+				name: `${unitTest.technician.firstname} ${unitTest.technician.lastname}`,
+				shift: unitTest.technician.shift
+			} : null,
 			sections: sections
 		});
 
@@ -59,11 +80,15 @@ const getFunctionality = async (req, res) => {
 	}
 };
 
-// Save test result for a specific test point
 const saveTestResult = async (req, res) => {
 	try {
 		const { unitTestId, testPointId } = req.params;
-		const { value, result } = req.body;
+		const { value, result, comments } = req.body;
+		const technician_id = req.user.technicianId; // From auth middleware
+
+		if (!technician_id) {
+			return res.status(403).json({ error: 'Must be a technician to save results' });
+		}
 
 		const testResult = await prisma.testResult.upsert({
 			where: {
@@ -75,14 +100,18 @@ const saveTestResult = async (req, res) => {
 			update: {
 				actual_value: value?.toString(),
 				actual_number: typeof value === 'number' ? value : null,
-				result: result
+				result: result,
+				comments: comments,
+				updated_at: new Date()
 			},
 			create: {
 				unit_test_id: parseInt(unitTestId),
 				test_point_id: parseInt(testPointId),
 				actual_value: value?.toString(),
 				actual_number: typeof value === 'number' ? value : null,
-				result: result
+				result: result,
+				comments: comments,
+				created_by: technician_id
 			}
 		});
 
@@ -94,11 +123,15 @@ const saveTestResult = async (req, res) => {
 	}
 };
 
-// Complete a unit test
 const completeTest = async (req, res) => {
 	try {
 		const { unitTestId } = req.params;
-		const { conditionalSignOff } = req.body;
+		const { conditionalSignOff, comments } = req.body;
+		const technician_id = req.user.technicianId;
+
+		if (!technician_id) {
+			return res.status(403).json({ error: 'Must be a technician to complete tests' });
+		}
 
 		const updatedTest = await prisma.unitTest.update({
 			where: {
@@ -106,7 +139,9 @@ const completeTest = async (req, res) => {
 			},
 			data: {
 				completed_at: new Date(),
-				conditional_sign_off: conditionalSignOff
+				conditional_sign_off: conditionalSignOff,
+				completed_by: technician_id,
+				comments: comments
 			}
 		});
 
@@ -122,4 +157,5 @@ module.exports = {
 	getFunctionality,
 	saveTestResult,
 	completeTest
+
 };

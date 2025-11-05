@@ -9,7 +9,9 @@ const getDashboard = async (req, res) => {
             },
             include: {
                 unit: true,
-                job: true
+                job: true,
+                technician: true,  // Include assigned technician
+                form: true        // Include test form details
             }
         });
 
@@ -22,7 +24,9 @@ const getDashboard = async (req, res) => {
             },
             include: {
                 unit: true,
-                job: true
+                job: true,
+                technician: true,
+                form: true
             },
             orderBy: {
                 completed_at: 'desc'
@@ -30,28 +34,34 @@ const getDashboard = async (req, res) => {
             take: 10
         });
 
-        // Get units waiting for test
-        // 
-        // for even units (except unit # 2): unitNumber % 8 == 2
-        // for odd (except unit # 1):        unitNumber % 8 == 1
+        // Get units waiting for water test
         const nextFullWaterRows = await prisma.$queryRaw`
-          SELECT id, unit_number
-          FROM "Unit"
-          WHERE (unit_number % 8) IN (1, 2)
+          SELECT u.id, u.unit_number, u.unit_hand, u.model
+          FROM "Unit" u
+          WHERE (u.unit_number % 8) IN (1, 2)
             AND NOT EXISTS (
-              SELECT 1 FROM "UnitTest" ut WHERE ut.unit_id = "Unit".id
+              SELECT 1 FROM "UnitTest" ut WHERE ut.unit_id = u.id
             )
-          ORDER BY unit_number ASC
+          ORDER BY u.unit_number ASC
           LIMIT 5
         `;
-        const nextFullWater = nextFullWaterRows.map(r => r.unit_number);
-        // Get top deficiencies (FAIL results)
+
+        // Get top deficiencies with more context
         const topDeficiencies = await prisma.testResult.findMany({
             where: {
                 result: 'FAIL'
             },
             include: {
-                testPoint: true
+                testPoint: {
+                    include: {
+                        section: true  // Include section info
+                    }
+                },
+                unitTest: {
+                    include: {
+                        unit: true
+                    }
+                }
             },
             take: 5
         });
@@ -59,17 +69,32 @@ const getDashboard = async (req, res) => {
         res.json({
             inProgress: inProgress.map(test => ({
                 unit: test.unit.unit_number,
+                unitHand: test.unit.unit_hand,
+                model: test.unit.model,
                 job: test.job.job_number,
-                startedAt: test.started_at
+                startedAt: test.started_at,
+                technician: test.technician ? `${test.technician.firstname} ${test.technician.lastname}` : null,
+                formName: test.form.name,
+                testType: test.test_type
             })),
             recentSignOffs: recentSignOffs.map(test => ({
                 unit: test.unit.unit_number,
+                unitHand: test.unit.unit_hand,
+                model: test.unit.model,                // <--- ensure model is included
                 job: test.job.job_number,
-                completedAt: test.completed_at
+                completedAt: test.completed_at,
+                technician: test.technician ? `${test.technician.firstname} ${test.technician.lastname}` : null,
+                testType: test.test_type
             })),
-            nextFullWater: nextFullWater.map(unit => unit.unit_number),
+            nextFullWater: nextFullWaterRows.map(unit => ({
+                unitNumber: unit.unit_number,
+                unitHand: unit.unit_hand,
+                model: unit.model
+            })),
             topDeficiencies: topDeficiencies.map(result => ({
                 type: result.testPoint.name,
+                section: result.testPoint.section.name,
+                unit: result.unitTest.unit.unit_number,
                 quantity: 1
             }))
         });
@@ -102,6 +127,16 @@ const getMetrics = async (req, res) => {
             activeTests: await prisma.unitTest.count({
                 where: {
                     completed_at: null
+                }
+            }),
+            failedTests: await prisma.testResult.count({
+                where: {
+                    result: 'FAIL',
+                    unitTest: {
+                        started_at: {
+                            gte: startOfDay
+                        }
+                    }
                 }
             })
         };
