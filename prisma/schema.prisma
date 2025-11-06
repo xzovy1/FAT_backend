@@ -144,6 +144,7 @@ model TestResult {
   actual_value  String?
   actual_number Float?
   result        ResultStatus
+  deficiency_category DeficiencyCategory
   created_at    DateTime     @default(now())
   updated_at    DateTime     @updatedAt
 
@@ -179,4 +180,14 @@ enum TestType {
 enum Orientation {
   Left
   Right
+}
+
+enum DeficiencyCategory {
+  INCORRECTINSTALLATION
+  INCORRECTTERMINATION
+  FAULTYCOMPONENT
+  MISSINGPART
+  OUTOFSTOCK
+  POORWORKMANSHIP
+  ADJUSTMENT
 }
