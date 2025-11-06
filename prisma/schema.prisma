@@ -141,12 +141,13 @@ model TestPoint {
 model TestResult {
   id Int @id @default(autoincrement())
 
-  actual_value  String?
-  actual_number Float?
-  result        ResultStatus
+  actual_value        String?
+  actual_number       Float?
+  result              ResultStatus
   deficiency_category DeficiencyCategory
-  created_at    DateTime     @default(now())
-  updated_at    DateTime     @updatedAt
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   comments   String?
   created_by Int
@@ -183,11 +184,11 @@ enum Orientation {
 }
 
 enum DeficiencyCategory {
-  INCORRECTINSTALLATION
-  INCORRECTTERMINATION
-  FAULTYCOMPONENT
-  MISSINGPART
-  OUTOFSTOCK
-  POORWORKMANSHIP
+  INCORRECT_INSTALLATION
+  INCORRECT_TERMINATION
+  FAULTY_COMPONENT
+  MISSING_PART
+  OUT_OF_STOCK
+  POOR_WORKMANSHIP
   ADJUSTMENT
 }

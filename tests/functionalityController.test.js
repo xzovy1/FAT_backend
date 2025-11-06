@@ -87,8 +87,9 @@ describe('functionalityController', () => {
             test_point_id: 100,
             actual_value: '7',
             actual_number: 7,
-            result: 'PASS',
-            comments: 'measured 7',
+            result: 'Fail',
+            comments: 'Wires swapped at TB52',
+            deficiency_category: "INCORRECT_TERMINATION",
             created_by: 42
         });
 
@@ -97,10 +98,14 @@ describe('functionalityController', () => {
         expect(prisma.testResult.upsert).toHaveBeenCalled();
         expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
             id: 1,
+            unit_test_id: 10,
+            test_point_id: 100,
             actual_value: '7',
             actual_number: 7,
-            result: 'PASS',
-            comments: 'measured 7'
+            result: 'Fail',
+            comments: 'Wires swapped at TB52',
+            deficiency_category: "INCORRECT_TERMINATION",
+            created_by: 42
         }));
     });
 
