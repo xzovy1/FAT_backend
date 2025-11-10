@@ -1,5 +1,14 @@
 const prisma = require("../prisma/client.js");
 
+const startFunctionality = async (req, res) => {
+	try {
+		const { job_id, unit_id, orientation, test_type } = req.body;
+		console.log(req.body)
+	} catch (error) {
+		console.error(error)
+	}
+}
+
 const getFunctionality = async (req, res) => {
 	try {
 		const { job_id, unit_id } = req.params;
@@ -154,6 +163,7 @@ const completeTest = async (req, res) => {
 };
 
 module.exports = {
+	startFunctionality,
 	getFunctionality,
 	saveTestResult,
 	completeTest

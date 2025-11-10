@@ -1,21 +1,21 @@
-import { PrismaClient, DataType } from '@prisma/client';
-
-const prisma = new PrismaClient();
+const { DataType } = require('../generated/prisma/');
+const prisma = require('./client.js')
 
 async function createForm() {
   // 1. Create a new form
   const form = await prisma.testForm.create({
     data: {
       name: "test FAT",
-      version: 1,
+      version: 4,
       is_active: true,
     },
   });
 
   // 2. Create sections for the form
 
-  const signon = await prisma.testSection.create({
+  const signOn = await prisma.testSection.create({
     data: {
+      sequence: 1,
       name: "Worker Sign-on",
       form_id: form.id,
     },
@@ -23,6 +23,7 @@ async function createForm() {
 
   const prechecks = await prisma.testSection.create({
     data: {
+      sequence: 2,
       name: "Pre-Start Checks",
       form_id: form.id,
     },
@@ -30,6 +31,7 @@ async function createForm() {
 
   const safety = await prisma.testSection.create({
     data: {
+      sequence: 3,
       name: "Safety Checks",
       form_id: form.id,
     },
@@ -37,36 +39,42 @@ async function createForm() {
 
   const lowVoltage = await prisma.testSection.create({
     data: {
+      sequence: 4,
       name: "Low Voltage",
       form_id: form.id,
     }
   })
   const electricalReadings = await prisma.testSection.create({
     data: {
+      sequence: 5,
       name: "Electrical Readings",
       form_id: form.id,
     }
   })
   const evapSection = await prisma.testSection.create({
     data: {
+      sequence: 6,
       name: "Evap Section",
       form_id: form.id,
     }
   })
   const motorSection = await prisma.testSection.create({
     data: {
+      sequence: 6,
       name: "Motor Section",
       form_id: form.id,
     }
   })
   const shutdown = await prisma.testSection.create({
     data: {
+      sequence: 7,
       name: "Shutdown",
       form_id: form.id,
     }
   })
   const signoff = await prisma.testSection.create({
     data: {
+      sequence: 8,
       name: "Sign off",
       form_id: form.id,
     }

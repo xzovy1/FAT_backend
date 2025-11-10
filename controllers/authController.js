@@ -4,17 +4,17 @@ const { generateToken } = require('../middleware/auth');
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        if (!email || !password) {
+        const { username, password } = req.body;
+        if (!username || !password) {
             return res.status(400).json({ error: 'Email and password required' });
         }
-
         const user = await prisma.user.findUnique({
-            where: { email },
+
+            where: { username },
             include: { technician: true }
         });
 
-        if (!user || !user.active) {
+        if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 

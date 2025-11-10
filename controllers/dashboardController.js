@@ -10,7 +10,6 @@ const getDashboard = async (req, res) => {
             include: {
                 unit: true,
                 job: true,
-                technician: true,  // Include assigned technician
                 form: true        // Include test form details
             }
         });
@@ -25,7 +24,7 @@ const getDashboard = async (req, res) => {
             include: {
                 unit: true,
                 job: true,
-                technician: true,
+                signoff_by: true,
                 form: true
             },
             orderBy: {
