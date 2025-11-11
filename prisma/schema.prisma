@@ -40,11 +40,11 @@ model Technician {
 }
 
 model Job {
-  id         Int      @id @unique @default(autoincrement())
+  id         Int        @id @unique @default(autoincrement())
   plc_mfg    String // PLC manufacturer for this job
-  created_at DateTime @default(now())
-
-  unitTests UnitTest[]
+  model      String?
+  created_at DateTime   @default(now())
+  unitTests  UnitTest[]
 }
 
 model UnitTest {
@@ -65,7 +65,7 @@ model UnitTest {
   job    Job @relation(fields: [job_id], references: [id])
 
   signoff_id  Int?
-  signoff_by  Technician? @relation("SignoffTechnician", fields: [signoff_id], references: [id])
+  signoff_by  Technician?  @relation("SignoffTechnician", fields: [signoff_id], references: [id])
   technicians Technician[]
   results     TestResult[]
 
@@ -78,7 +78,6 @@ model Unit {
   id          Int         @id @default(autoincrement())
   unit_number Int         @unique
   unit_hand   Orientation
-  model       String?
   created_at  DateTime    @default(now())
   unitTests   UnitTest[]
 }

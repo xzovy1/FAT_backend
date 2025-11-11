@@ -19,7 +19,7 @@ const functionalityRouter = require("./routers/functionalityRouter")
 app.use("/api/forms", functionalityRouter);
 
 const dashboardRouter = require("./routers/dashboardRouter")
-app.use("/api/home", dashboardRouter)
+app.use("/api/dashboard", dashboardRouter)
 
 
 app.listen(port, () => {

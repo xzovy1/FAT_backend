@@ -1,15 +1,23 @@
 const prisma = require("../prisma/client.js");
 
-const startFunctionality = async (req, res) => {
+exports.startFunctionality = async (req, res) => {
 	try {
 		const { job_id, unit_id, orientation, test_type } = req.body;
+		const job = await prisma.job.findUnique({
+			where: {
+				id: job_id
+			}
+		})
+		if (!job) return res.status(404).json({ error: 'Job number not found' });
+
+
 		console.log(req.body)
 	} catch (error) {
 		console.error(error)
 	}
 }
 
-const getFunctionality = async (req, res) => {
+exports.getFunctionality = async (req, res) => {
 	try {
 		const { job_id, unit_id } = req.params;
 
@@ -89,7 +97,7 @@ const getFunctionality = async (req, res) => {
 	}
 };
 
-const saveTestResult = async (req, res) => {
+exports.saveTestResult = async (req, res) => {
 	try {
 		const { unitTestId, testPointId } = req.params;
 		const { value, result, comments } = req.body;
@@ -132,7 +140,7 @@ const saveTestResult = async (req, res) => {
 	}
 };
 
-const completeTest = async (req, res) => {
+exports.completeTest = async (req, res) => {
 	try {
 		const { unitTestId } = req.params;
 		const { conditionalSignOff, comments } = req.body;
@@ -160,12 +168,4 @@ const completeTest = async (req, res) => {
 		console.error('Complete test error:', error);
 		res.status(500).json({ error: 'Failed to complete test' });
 	}
-};
-
-module.exports = {
-	startFunctionality,
-	getFunctionality,
-	saveTestResult,
-	completeTest
-
 };

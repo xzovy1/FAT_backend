@@ -4,9 +4,9 @@ const functionalityRouter = Router();
 
 
 // GET /unit-tests/:job/:unit
-functionalityRouter.get('/testing-forms/:job/:unit', functionalityController.getFunctionality);
+functionalityRouter.get('/:job/:unit', functionalityController.getFunctionality);
 
 // POST /unit-tests/:job/:id
-functionalityRouter.post('/testing-forms/begin', functionalityController.startFunctionality)
+functionalityRouter.post('/start', functionalityController.startFunctionality)
 
 module.exports = functionalityRouter;

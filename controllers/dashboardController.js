@@ -1,6 +1,23 @@
 const prisma = require("../prisma/client.js");
 
-const getDashboard = async (req, res) => {
+exports.createJobNumber = async (req, res) => {
+    const { job_id, plc_mfg, unit_model } = req.body.formdata
+    try {
+        const job = await prisma.job.create({
+            data: {
+                id: parseInt(job_id),
+                plc_mfg,
+                model: unit_model,
+            }
+        })
+
+    } catch (error) {
+        console.error('Job number creation error:', error);
+        res.status(500).json({ error: error });
+    }
+}
+
+exports.getDashboard = async (req, res) => {
     try {
         // Get units in progress (have active tests)
         const inProgress = await prisma.unitTest.findMany({
@@ -35,7 +52,7 @@ const getDashboard = async (req, res) => {
 
         // Get units waiting for water test
         const nextFullWaterRows = await prisma.$queryRaw`
-          SELECT u.id, u.unit_number, u.unit_hand, u.model
+          SELECT u.id, u.unit_number, u.unit_hand
           FROM "Unit" u
           WHERE (u.unit_number % 8) IN (1, 2)
             AND NOT EXISTS (
@@ -104,7 +121,7 @@ const getDashboard = async (req, res) => {
     }
 };
 
-const getMetrics = async (req, res) => {
+exports.getMetrics = async (req, res) => {
     try {
         const today = new Date();
         const startOfDay = new Date(today.setHours(0, 0, 0, 0));
@@ -147,4 +164,3 @@ const getMetrics = async (req, res) => {
     }
 };
 
-module.exports = { getDashboard, getMetrics };
